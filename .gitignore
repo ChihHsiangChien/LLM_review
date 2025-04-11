@@ -1,0 +1,19 @@
+# Environment variables
+.env
+
+# Python virtual environment
+venv/
+__pycache__/
+*.pyc
+
+# IDE / Editor specific files
+.vscode/
+.idea/
+
+# Output files (optional, if you don't want to track them)
+llm_review_output.csv
+book_chunks.csv
+06動物的故事_ocr_output.txt
+llm_review_output_1-155.csv
+testAnthropic.py
+test.py
