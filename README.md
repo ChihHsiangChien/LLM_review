@@ -9,7 +9,7 @@
 
 ## 主要功能
 
-*   **多 LLM 支援**: 同時利用 OpenAI GPT 系列、Google Gemini 和 xAI Grok 的能力進行審閱。
+*   **多 LLM 支援**: 同時利用 OpenAI GPT 系列、Google Gemini、xAI Grok 和 Anthropic Claude 的能力進行審閱。
 *   **內容審定**: 基於科學知識和社會近況檢查事實錯誤、過時資訊、爭議性或歧視性內容。
 *   **頁面級文本切割**: `preprocess_book.py` 根據檔案內的 `--- Page X ---` 標記進行切割。
 *   **頁尾清理**: `preprocess_book.py` 自動嘗試移除頁碼等頁尾干擾資訊。
@@ -25,7 +25,7 @@
 *   Python 3.8 或更高版本。
 *   安裝必要的 Python 函式庫：
     ```bash
-    pip install openai google-generativeai python-dotenv pandas
+    pip install openai google-generativeai python-dotenv pandas anthropic
     ```
 
 ## 設定環境變數
@@ -54,7 +54,7 @@
 2.  **安裝依賴:**
     開啟終端機，切換到您的工作目錄，然後執行：
     ```bash
-    pip install openai google-generativeai python-dotenv pandas
+    pip install openai google-generativeai python-dotenv pandas anthropic
     ```
 
 3.  **創建 `.env` 檔案:**
@@ -65,6 +65,7 @@
         OPENAI_API_KEY="sk-你的OpenAI金鑰"
         GOOGLE_API_KEY="你的Google Gemini金鑰"
         XAI_API_KEY="你的xAI Grok API金鑰"
+        ANTHROPIC_API_KEY="sk-ant-你的Anthropic金鑰"
         ```
     *   **請務必將 `"..."` 中的內容替換為您自己的有效 API 金鑰。** 只需填寫你計劃使用的 LLM 的 API Key。
 
@@ -77,8 +78,8 @@
 
 5.  **(可選) 配置 `review_chunks.py`:**
     你可以直接編輯 `review_chunks.py` 檔案來：
-    *   修改 `ENABLE_OPENAI`, `ENABLE_GEMINI`, `ENABLE_XAI` (設置為 `True` 或 `False`) 來啟用或禁用特定的 LLM。
-    *   修改 `OPENAI_MODEL`, `GEMINI_MODEL`, `XAI_MODEL` 來選擇不同的模型版本。
+    *   修改 `ENABLE_OPENAI`, `ENABLE_GEMINI`, `ENABLE_XAI`, `ENABLE_ANTHROPIC` (設置為 `True` 或 `False`) 來啟用或禁用特定的 LLM。
+    *   修改 `OPENAI_MODEL`, `GEMINI_MODEL`, `XAI_MODEL`, `ANTHROPIC_MODEL` 來選擇不同的模型版本。
     *   修改 `DEFAULT_CHUNK_INPUT_FILE` 和 `DEFAULT_REVIEW_OUTPUT_FILE` 的預設檔案名稱。
 
 ## 使用說明
@@ -168,7 +169,7 @@
 ## 檔案說明
 
 *   **`preprocess_book.py`**: 用於將 TXT 書籍檔案根據頁碼標記分割成區塊的腳本。
-*   **`review_chunks.py`**: 用於調用 LLM 審閱區塊並記錄結果的腳本。
+*   **`review_chunks.py`**: 用於調用 LLM (OpenAI, Gemini, Grok, Anthropic) 審閱區塊並記錄結果的腳本。
 *   **`.env`**: (需自行創建) 存儲 API Keys 的檔案。
 *   **`book_chunks.csv`**: (由 `preprocess_book.py` 生成) 包含 `chunk_id` (頁面 ID，格式通常為 `檔名_PageX`) 和 `original_text` (整頁內容) 的 CSV 檔案，作為 `review_chunks.py` 的輸入。
 *   **`llm_review_output.csv`**: (由 `review_chunks.py` 生成/附加) 包含原始文本和各 LLM 審閱建議與原因的最終輸出 CSV 檔案。
@@ -177,17 +178,17 @@
 
 *   **啟用/禁用 LLM**:
     *   編輯 `review_chunks.py` 檔案。
-    *   找到檔案開頭的 `ENABLE_OPENAI`, `ENABLE_GEMINI`, `ENABLE_XAI` 變數。
+    *   找到檔案開頭的 `ENABLE_OPENAI`, `ENABLE_GEMINI`, `ENABLE_XAI`, `ENABLE_ANTHROPIC` 變數。
     *   將其值設置為 `True` (啟用) 或 `False` (禁用) 來控制是否調用對應的 LLM。
 *   **選擇 LLM 模型**:
     *   編輯 `review_chunks.py` 檔案。
-    *   修改 `OPENAI_MODEL`, `GEMINI_MODEL`, `XAI_MODEL` 的值來指定要使用的模型版本。
+    *   修改 `OPENAI_MODEL`, `GEMINI_MODEL`, `XAI_MODEL`, `ANTHROPIC_MODEL` 的值來指定要使用的模型版本。
 
 ## 注意事項
 
-*   **API 成本**: 使用 OpenAI, Google Cloud (Gemini), 和 xAI 的 API 通常需要付費。請注意您的 API 使用量和相關費用。
+*   **API 成本**: 使用 OpenAI, Google Cloud (Gemini), xAI, 和 Anthropic 的 API 通常需要付費。請注意您的 API 使用量和相關費用。
 *   **API 速率限制**: 頻繁調用 API 可能會觸發服務提供商的速率限制。腳本內建了基本的重試和指數退避機制，但如果遇到持續的速率限制錯誤，可能需要調整 `retry_delay` 或增加 `time.sleep()` 的時間。
-*   **錯誤處理**: 腳本包含對常見錯誤（如檔案找不到、API 金鑰無效、API 調用失敗）的基本處理，但可能無法涵蓋所有異常情況。請留意終端機輸出的錯誤訊息。
+*   **錯誤處理**: 腳本包含對常見錯誤（如檔案找不到、API 金鑰無效、API 調用失敗、安全阻擋）的基本處理，但可能無法涵蓋所有異常情況。請留意終端機輸出的錯誤訊息。
 *   **頁碼範圍依賴**: `review_chunks.py` 的 `--start-page` 和 `--end-page` 功能依賴於 `preprocess_book.py` 生成的 `chunk_id` 包含 `_PageX` 格式。如果 `chunk_id` 格式不同，範圍篩選將無法正常工作。
 *   **頁尾清理的局限性**: `preprocess_book.py` 中的 `clean_page_footer` 函數是基於常見模式的啟發式清理，對於格式特殊的書籍可能效果不佳或誤刪內容，您可能需要根據實際情況修改此函數的邏輯。
 *   **記憶體使用**: 如果輸入的 `book_chunks.csv` 檔案非常巨大，`review_chunks.py` 在啟動時讀取所有區塊信息以進行篩選和檢查已處理 ID 可能會消耗較多記憶體。
@@ -204,5 +205,7 @@
 *   `Gemini 原因`: Gemini 模型提供的修改原因或說明。
 *   `xAI Grok 建議修改`: xAI Grok 模型提供的修改建議文字。
 *   `xAI Grok 原因`: xAI Grok 模型提供的修改原因或說明。
+*   `Anthropic 建議修改`: Anthropic 模型提供的修改建議文字。
+*   `Anthropic 原因`: Anthropic 模型提供的修改原因或說明。
 
-*注意：如果某個 LLM 在 `review_chunks.py` 中被禁用（例如 `ENABLE_OPENAI = False`），則對應的建議和原因欄位會顯示 "未啟用"。如果 API 調用失敗或解析出錯，欄位中會顯示錯誤訊息。*
+*注意：如果某個 LLM 在 `review_chunks.py` 中被禁用（例如 `ENABLE_ANTHROPIC = False`），則對應的建議和原因欄位會顯示 "未啟用"。如果 API 調用失敗或解析出錯，欄位中會顯示錯誤訊息。*
