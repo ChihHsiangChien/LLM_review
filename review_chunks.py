@@ -24,7 +24,7 @@ ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY") # Added Anthropic Key
 # --- LLM Model Settings ---
 OPENAI_MODEL = "gpt-4o-mini" # Or "gpt-4-turbo", "gpt-3.5-turbo"
 GEMINI_MODEL = "gemini-1.5-flash-latest" # Or "gemini-1.5-pro-latest"
-XAI_MODEL = "grok-3-latest" # Or "grok-1.5-pro" grok-beta
+XAI_MODEL = "grok-3-mini-latest" # Or "grok-1.5-pro" grok-beta
 ANTHROPIC_MODEL = "claude-3-5-haiku-20241022" # Or "claude-3-opus-20240229", "claude-3-haiku-20240307"
 
 # --- Enable/Disable LLMs ---
