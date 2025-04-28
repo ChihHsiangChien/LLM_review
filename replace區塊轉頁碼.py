@@ -5,6 +5,7 @@ def replace_page_numbers(input_filepath, output_filepath):
     # Regex to match the target line and capture the page number
     # Handles potential variations in spacing and ensures both numbers match
     regex = re.compile(r"^(## 區塊 ID: .*?_Page)(\d+)( \(頁碼: )\2(\))$")
+    # 區塊換頁碼加上多少數字？
     subtraction_value = 13
     lines_changed = 0
 
